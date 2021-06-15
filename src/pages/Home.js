@@ -14,8 +14,6 @@ const Home = () => {
 
     const onInputChange = (ev) => {
         setInput(ev.target.value)
-        // eslint-disable-next-line
-        console.log(ev.target.value)
     }
 
     const onSearch = () => {
