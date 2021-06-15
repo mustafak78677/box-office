@@ -17,7 +17,7 @@ const Home = () => {
     }
 
     const onSearch = () => {
-        apiGet(`search/${searchOptions}?q=${input}`).then(result => {
+        apiGet(`/search/${searchOptions}?q=${input}`).then(result => {
             setResults(result);
         })
     }
