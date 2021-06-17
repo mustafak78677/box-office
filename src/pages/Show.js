@@ -1,6 +1,11 @@
 // eslint-disable-next-line
+/* eslint-disable no-underscore-dangle */
 import React, { useEffect, useReducer } from 'react'
 import { useParams } from 'react-router-dom';
+import Cast from '../components/show/Cast';
+import Details from '../components/show/Details';
+import Seasons from '../components/show/Seasons';
+import ShowMainData from '../components/show/ShowMainData';
 import { apiGet } from '../misc/config';
 
 const reducer = (prevState, action) => {
@@ -26,12 +31,8 @@ const initialState = {
 const Show = () => {
     // eslint-disable-next-line
     const { id } = useParams();
-    // const [show,setShow] = useState(null);
-    // const [isLoading, setIsLoading] = useState(true);
-    // const [error, setError] = useState(null);
-
-    const[state, dispatch] = useReducer(reducer, initialState)
-    console.log('state', state)
+    // eslint-disable-next-line
+    const[{show, isLoading, error}, dispatch] = useReducer(reducer, initialState)
 
     useEffect( ()=>{
         let isMounted = true;
@@ -51,19 +52,33 @@ const Show = () => {
             isMounted=false;
         }
     }, [id] );
-    // console.log('show', show);
+    console.log('show', show);
 
-    // if(isLoading){
-    //     return <div>Data is being Loaded</div>
-    // }
+    if(isLoading){
+        return <div>Data is being Loaded</div>
+    }
 
-    // if(error){
-    //     return <div>Error occurred: {error}</div>
-    // }
+    if(error){
+        return <div>Error occurred: {error}</div>
+    }
 
     return (
+
         <div>
-            This is Show page
+            <ShowMainData image={show.image} name={show.name} rating={show.rating} summary={show.summary} 
+                tags={show.genres} />
+            <div>
+                <h2>Details</h2>
+                <Details status={show.status} network={show.network} premiered={show.premiered} />
+            </div>
+            <div>
+                <h2>Seasons</h2>
+                <Seasons seasons={show._embedded.seasons} />
+            </div>
+            <div>
+                <h2>Cast</h2>
+                <Cast cast={show._embedded.cast} />
+            </div>
         </div>
     )
 }
