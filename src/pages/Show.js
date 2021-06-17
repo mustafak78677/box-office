@@ -1,28 +1,49 @@
 // eslint-disable-next-line
-import React, { useEffect, useState } from 'react'
-import { useParams } from 'react-router-dom'
+import React, { useEffect, useReducer } from 'react'
+import { useParams } from 'react-router-dom';
 import { apiGet } from '../misc/config';
+
+const reducer = (prevState, action) => {
+    switch(action.type){
+        case 'FETCH_SUCCESS': {
+            return {isLoading: false, error: null, show: action.show}
+        }
+
+        case 'FETCH_FAILED': {
+            return {...prevState, isLoading: false, error: action.error}
+        }
+
+        default: return prevState
+    };
+};
+
+const initialState = {
+    show: null,
+    isLoading: true,
+    error: null
+}
 
 const Show = () => {
     // eslint-disable-next-line
     const { id } = useParams();
-    const [show,setShow] = useState(null);
-    const [isLoading, setIsLoading] = useState(true);
-    const [error, setError] = useState(null);
+    // const [show,setShow] = useState(null);
+    // const [isLoading, setIsLoading] = useState(true);
+    // const [error, setError] = useState(null);
+
+    const[state, dispatch] = useReducer(reducer, initialState)
+    console.log('state', state)
 
     useEffect( ()=>{
         let isMounted = true;
         apiGet(`/shows/${id}?embed[]=seasons&embed[]=cast`).then(results=>{
             setTimeout(()=>{
                 if(isMounted){
-                    setShow(results);
-                    setIsLoading(false);
+                    dispatch({type: 'FETCH_SUCCESS', show: results})
                 }
             }, 2000)
         }).catch(err=>{
             if(isMounted){
-                setError(err.message);
-                setIsLoading(false);
+                dispatch({type: 'FETCH_FAILED', error: err.message})
             }
         })
 
@@ -30,15 +51,15 @@ const Show = () => {
             isMounted=false;
         }
     }, [id] );
-    console.log('show', show);
+    // console.log('show', show);
 
-    if(isLoading){
-        return <div>Data is being Loaded</div>
-    }
+    // if(isLoading){
+    //     return <div>Data is being Loaded</div>
+    // }
 
-    if(error){
-        return <div>Error occurred: {error}</div>
-    }
+    // if(error){
+    //     return <div>Error occurred: {error}</div>
+    // }
 
     return (
         <div>
